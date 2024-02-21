@@ -27,7 +27,16 @@ EOF
 
 
 function github-template() {
-	echo "Create Github template"
+	wd=$(dirname $0)
+	scriptname="$wd/templates/$1-template.sh"
+	/bin/sh $scriptname $1
+	if [[ $? -eq 0 ]]; then
+		echo "Created Github template"
+		return 0
+	else
+		echo "There was an error creating the Github template"
+		return 1
+	fi
 }
 
 function shaw-template() {
@@ -38,13 +47,14 @@ function main() {
 
 	if [[ $1 == '--help' || $1 == '-h' ]]; then
 		usage
-	else
+	elif [[ $1 == '-t' && -n $2 ]]; then
+		shift ;
 		case $1 in
-			"Zed-Shaw")
-				shaw-template ${@:2}
+			"shaw")
+				shaw-template $1
 				;;
-			"Github")
-				github-template ${@:2}
+			"github")
+				github-template $1
 				;;
 			*)
 				echo "Invalid template name"
