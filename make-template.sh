@@ -17,7 +17,8 @@ Options:
 
 Choose from one of the following templates:
 
-Zed-Shaw	C project template from Shaw's "Learn C the Hard Way"
+shaw		C project template from Shaw's "Learn C the Hard Way"
+github		C project template based on Github default filesystem
 
 EOF
 	fi
@@ -26,15 +27,15 @@ EOF
 
 
 
-function github-template() {
+function template() {
 	wd=$(dirname $0)
 	scriptname="$wd/templates/$1-template.sh"
 	/bin/sh $scriptname $1
 	if [[ $? -eq 0 ]]; then
-		echo "Created Github template"
+		echo "Created template"
 		return 0
 	else
-		echo "There was an error creating the Github template"
+		echo "There was an error creating the template"
 		return 1
 	fi
 }
@@ -49,19 +50,7 @@ function main() {
 		usage
 	elif [[ $1 == '-t' && -n $2 ]]; then
 		shift ;
-		case $1 in
-			"shaw")
-				shaw-template $1
-				;;
-			"github")
-				github-template $1
-				;;
-			*)
-				echo "Invalid template name"
-				usage '-h'
-				exit -1
-				;;
-		esac
+		template $1
 	fi
 
 }
