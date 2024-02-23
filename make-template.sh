@@ -3,6 +3,7 @@
 # Create templates for C Projects
 # --------------------------------------------------------------------------- #
 
+# Help message and general usage information
 function usage() {
 	if [[ $1 == '-h' ]]; then
 		echo "$0 [-h] Template [ProjectName]"
@@ -18,8 +19,8 @@ Options:
 
 Choose from one of the following templates:
 
-shaw		C project template from Shaw's "Learn C the Hard Way"
-github		C project template based on Github default filesystem
+Shaw		C project template from Shaw's "Learn C the Hard Way"
+Github		C project template based on Github default filesystem
 
 Return code info:
 
@@ -33,23 +34,31 @@ EOF
 	return 100
 }
 
+# Point to the template-generation script located in the ./templates directory
 function template() {
 	wd=$(dirname $0)
-	scriptname="$wd/templates/$1-template.sh"
+	template=$(lower $1)
+	scriptname="$wd/templates/$template-template.sh"
 
 	if [[ ! -f $scriptname ]]; then
-		echo "The template you tried to create does not current exist"
+		echo "The template you tried to create doesn't currently exist"
 		return 2
 	fi
 
 	/bin/sh $scriptname $1
 	if [[ $? -eq 0 ]]; then
-		echo "Created template"
+		echo "Template created successfully"
 		return 0
 	else
 		echo "There was an error creating the template"
 		return 1
 	fi
+}
+
+# Convert text to lowercase to error-proof calls to template scripts
+function lower() {
+	echo $@ | tr '[:upper:]' '[:lower:]'
+	return $?
 }
 
 function main() {
