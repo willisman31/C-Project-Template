@@ -27,6 +27,7 @@ Return code info:
 0	Success
 1	Error with template creation script
 2	Nonexistent template
+3	Unspecified template
 100	Help and usage
 
 EOF
@@ -62,15 +63,38 @@ function lower() {
 }
 
 function main() {
-	if [[ $1 == '--help' || $1 == '-h' ]]; then
-		usage
-		export temp=$?
-	elif [[ $1 == '-t' && -n $2 ]]; then
-		shift ;
-		template $1
-		export temp=$?
+	while [[ -n $1 && $temp -lt 1 ]]; do
+		case($1)
+			'--help')
+			'-h')
+				usage
+				export temp=$?
+				break
+				;;
+			'-t')
+				if [[ -n $2 ]]; then
+					template $2
+					export temp=$?
+					shift 2
+				else
+					echo "Specify a template"
+					export temp=3
+				fi
+				;;
+			'-o')
+				if [[ -n $2 ]]; then
+					# set output dir
+				else
+					echo "Specify an output location"
+					export temp=4
+				fi
+				;;
+			*)
+		esac
+	done
+	if [[ ! -n $temp ]]; then
+		export temp=1
 	fi
-
 	rc=${temp}
 	unset $temp
 	exit $rc
